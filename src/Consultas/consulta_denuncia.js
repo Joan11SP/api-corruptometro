@@ -5,6 +5,22 @@ const util = require('util');
 const query = util.promisify(mysql.query).bind(mysql);
 const crear_denuncia = async (denuncia) => {
     try {
+        let guardarDenunciante;
+
+        if (denuncia.tipo == 2 ){
+            guardarDenunciante = await query(
+                'insert into denuncinante (edad,genero,profesion,nombre) values (?,?,?,?)',
+                [
+                    parseInt(denuncia.edad),
+                    parseInt(denuncia.genero), // 1 hombre - 2 mujer - 3 otro
+                    denuncia.profesion,
+                    denuncia.nombre
+                ]
+            );
+            denuncia.idDenunciante = guardarDenunciante.id_Denunciante;
+        }
+        
+
         const guardar = await query(
             `insert into denuncia(id_denunciante, denunciado, fecha, tipo_corrupcion, detalles_denuncia, nivel_corrupcion, es_denuncia_real, correo_electronico, id_institucion, archivo, descripcion)  values (?,?,?,?,?,?,?,?,?,?,?);`,
             [
@@ -17,11 +33,10 @@ const crear_denuncia = async (denuncia) => {
                 parseInt(denuncia.esReal),
                 denuncia.correo,
                 parseInt(denuncia.idInstitucion),
-                denuncia.archivo== null ? ' ':denuncia.archivo,
+                denuncia.archivo == null ? ' ':denuncia.archivo,
                 denuncia.descripcion,
             ]
         );
-        console.log(guardar)
         return { respuesta: guardar.affectedRows }
     } catch (error) {
         throw error;

@@ -10,9 +10,8 @@ const nueva_denuncia = async (req,res) => {
     try {
         const denuncia = req.body;
         const file = req.file;
-        console.log(req.file);
-        console.log(denuncia)
-        if(denuncia.idInstitucion || denuncia.nivelCorrupcion || denuncia.detallesDenuncia){
+        // denuncia.tipo 1 anonima - 2 con datos
+        if(denuncia.idInstitucion || denuncia.nivelCorrupcion || denuncia.detallesDenuncia || denuncia.tipo){
             var foto
            if(file != null){
                 foto = await cloudinary.uploader.upload(
