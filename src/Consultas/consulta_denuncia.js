@@ -7,7 +7,7 @@ const crear_denuncia = async (denuncia) => {
     try {
         let guardarDenunciante;
 
-        if (denuncia.tipo == 2 ){
+        if (parseInt(denuncia.tipo) == 2 ){
             guardarDenunciante = await query(
                 'insert into denuncinante (edad,genero,profesion,nombre) values (?,?,?,?)',
                 [
@@ -17,12 +17,13 @@ const crear_denuncia = async (denuncia) => {
                     denuncia.nombre
                 ]
             );
-            denuncia.idDenunciante = guardarDenunciante.id_Denunciante;
+            denuncia.idDenunciante = guardarDenunciante.insertId;
         }
         
 
         const guardar = await query(
-            `insert into denuncia(id_denunciante, denunciado, fecha, tipo_corrupcion, detalles_denuncia, nivel_corrupcion, es_denuncia_real, correo_electronico, id_institucion, archivo, descripcion)  values (?,?,?,?,?,?,?,?,?,?,?);`,
+            `insert into denuncia(id_denunciante, denunciado, fecha, tipo_corrupcion, detalles_denuncia, nivel_corrupcion, es_denuncia_real, correo_electronico, id_institucion, archivo, descripcion,cargo)  
+            values (?,?,?,?,?,?,?,?,?,?,?,?);`,
             [
                 parseInt(denuncia.idDenunciante),
                 denuncia.denunciado,
@@ -35,6 +36,7 @@ const crear_denuncia = async (denuncia) => {
                 parseInt(denuncia.idInstitucion),
                 denuncia.archivo == null ? ' ':denuncia.archivo,
                 denuncia.descripcion,
+                denuncia.cargo == undefined ? null : denuncia.cargo
             ]
         );
         return { respuesta: guardar.affectedRows }
